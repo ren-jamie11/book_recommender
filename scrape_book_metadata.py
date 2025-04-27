@@ -22,9 +22,16 @@ def regex_match(pattern, text):
 
     raise RegexPatternNotFoundException(f"Pattern '{pattern}' not found in the text: {text[:40]}...") 
 
+def remove_comma_from_number(num_str):
+    num = num_str.replace(",", "")
+    return int(num)
+
 def get_int_from_str(text):
         pattern = r'([\d,]+)'
-        return regex_match(pattern, text)
+        match = regex_match(pattern, text)
+
+        num = remove_comma_from_number(match)
+        return num
 
 class BookMetaData:
     def __init__(self, url):
@@ -173,7 +180,7 @@ class BookMetaData:
 
             raise RegexPatternNotFoundException(f"Unable to convert date_str {date_str} into datetime object") 
         
-        pattern = r"published\s+(.*)"
+        pattern = r"(?i)published\s+(.*)"
         text = self.publish_page_text
 
         date_str = regex_match(pattern, text)
@@ -198,7 +205,8 @@ class BookMetaData:
 
            
             if rating_html:
-                self.rating = html_to_int(rating_html)
+                rating_text = rating_html.text
+                self.rating = float(rating_text)
 
             else:
                 raise SoupNotFoundException(f"Could not find rating value html content")
@@ -235,8 +243,7 @@ class BookMetaData:
         match = regex_match(pattern, text)
 
         if match:
-            number = match.replace(",", "")
-            return int(number)
+            return remove_comma_from_number(match)
 
         return RegexPatternNotFoundException(f"Unable to find qty from ***stars text") 
 
@@ -286,15 +293,12 @@ self.num_reviews = 0
 """
 
 
-
-def test():
-    url = 'https://www.goodreads.com/book/show/49350179-jfk'
-
+def test(url):
     book = BookMetaData(url)
     book.get_info()
 
     book_metadata = book.retrieve_metadata()
     print(book_metadata)
 
-
-test()
+url = 'https://www.goodreads.com/book/show/3.Harry_Potter_and_the_Sorcerer_s_Stone'
+test(url)
