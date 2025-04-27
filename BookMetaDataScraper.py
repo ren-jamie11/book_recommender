@@ -3,6 +3,7 @@ from datetime import datetime
 import requests
 import re
 
+from static import *
 from CustomExceptions import *
 
 def regex_match(pattern, text):
@@ -24,6 +25,7 @@ def get_int_from_str(text):
         return num
 
 class BookMetaData:
+
     def __init__(self, url):
         self.url = url
         self.soup = None
@@ -46,6 +48,11 @@ class BookMetaData:
         self.num_reviews = 0
         self.ratings_histogram = dict()
 
+        # reviews
+        self.review_cards = []
+        self.reviews = dict()
+        
+
     def retrieve_metadata(self):
         """Package basic info in a dictionary and return it"""
         return {
@@ -59,9 +66,29 @@ class BookMetaData:
             'num_reviews': self.num_reviews,
             'ratings_histogram': self.ratings_histogram,
         }
+    
+    def retrieve_reviews(self):
+        return self.reviews
 
 
-    def get_soup(self):
+    def get_soup(self, headers_list = headers_list):
+        for header in headers_list:
+            response = requests.get(url, headers=header)
+            source = response.text
+
+            if len(source) > 10000:
+                soup = BeautifulSoup(source, "lxml")
+
+                if soup:
+                    self.soup = soup
+                    return True
+                
+                else:
+                    continue
+
+        raise RequestFailedException(f"Failed to fetch URL: {self.url}")
+
+    def get_soup_old(self):
         try:
             source = requests.get(self.url)
         except Exception as e:
@@ -257,22 +284,151 @@ class BookMetaData:
         self.ratings_histogram = histogram
 
 
-    def get_info(self):
-        self.get_soup()
-        self.get_html_content_from_url()
-
-        # Make sure we can continue even if 1 feature failed
-        self.get_title()
-        self.get_author()
-        self.get_genres()
+    def get_metadata(self):
+        try:
+            self.get_soup()  # Try to fetch the soup
+        except Exception as e:
+            print(f"Error in get_soup: {e}")
+            return  # Exit if get_soup fails
         
-        self.get_publish_page_text()
-        self.get_page_count()
-        self.get_publish_date()
+        try:
+            self.get_html_content_from_url()
+        except Exception as e:
+            print(f"Error in get_html_content_from_url: {e}")
+        
+        try:
+            self.get_title()
+        except Exception as e:
+            print(f"Error getting title from html content: {e}")
 
-        self.get_ratings_histogram_html_content()
-        self.get_ratings_info()
-        self.get_ratings_histogram()
+        # Now that get_soup() worked, proceed to the other methods individually
+        methods = [
+            self.get_author,
+            self.get_genres,
+            self.get_publish_page_text,
+            self.get_page_count,
+            self.get_publish_date,
+            self.get_ratings_histogram_html_content,
+            self.get_ratings_info,
+            self.get_ratings_histogram
+        ]
+        
+        # Loop through each method and handle exceptions individually
+        for method in methods:
+            try:
+                method()  # Call the method
+            except Exception as e:
+                print(f"Error in {method.__name__} for {self.title}: {e}")
+                continue  # Move on to the next one even if this one fails
+
+
+    def get_review_cards(self, n = 10):
+        soup = self.soup
+        if soup:
+            review_cards = soup.find_all('article', class_ = 'ReviewCard')
+
+            if review_cards:
+                self.review_cards = review_cards[:n]
+                return True
+
+            raise SoupNotFoundException(f"Could not find review cards from soup")
+        
+        raise SoupNotFoundException(f"get_soup() is empty...")
+
+
+    def get_user_url_from_review_card(self, review_card):
+        try:
+            profile_html = review_card.find('div', class_ = 'ReviewerProfile__name')
+            profile_url = profile_html.a['href']
+            
+            if profile_url:
+                return profile_url
+            
+            raise SoupNotFoundException(f"Found profile url from review card but it was empty")
+
+        except Exception as e:
+            raise SoupNotFoundException(f"Could not find user url from review card")
+
+
+    def get_user_rating_text_from_review_card(self, review_card):
+
+        shelf_html = review_card.find('div', class_ = 'ShelfStatus')
+        
+        if shelf_html:
+            try: 
+                rating_text = shelf_html.find('span', {'aria-label': True})['aria-label']
+                return rating_text
+            
+            except Exception as e:
+                 raise SoupNotFoundException(f"Could not find rating_text (aria-label) from review shelf")
+            
+        raise SoupNotFoundException(f"Could not find shelf from review card")
+
+    def get_rating_from_rating_text(self, text):
+        pattern = r'Rating (\d+) out of 5'
+        match = regex_match(pattern, text)
+        
+        return int(match)
+
+
+    def get_user_rating_from_review_card(self, review_card):
+        rating_text = self.get_user_rating_text_from_review_card(review_card)
+        rating = self.get_rating_from_rating_text(rating_text)
+
+        return rating
+    
+    def get_review_card_dict(self, i, review_card):
+        res = dict()
+
+
+        res['user'] = self.get_user_url_from_review_card(review_card)
+        res['rating'] = self.get_user_rating_from_review_card(review_card)
+
+        try:
+            res['user'] = self.get_user_url_from_review_card(review_card)
+            res['rating'] = self.get_user_rating_from_review_card(review_card)
+        except SoupNotFoundException as e:
+            print(f"SoupNotFound error review card {i}: {e}")
+            res['user'] = None  
+            res['rating'] = None  
+        except RegexPatternNotFoundException as e:
+            print(f"RegexNotFound review card {i}: {e}")
+            res['user'] = None  
+            res['rating'] = None  
+        except Exception as e:
+            print(f"Unexpected review card {i}: {e}")
+            res['user'] = None
+            res['rating'] = None
+
+        return res
+
+    def get_reviews(self):
+
+        try: 
+            reviews = {d["user"]: d["rating"] for d in (self.get_review_card_dict(i, r) for i, r in enumerate(self.review_cards))}
+            self.reviews = reviews 
+
+        except SoupNotFoundException as e:
+            print(f"SoupNotFound error in get_reviews(): {e}")
+        except RegexPatternNotFoundException as e:
+            print(f"RegexNotFound error in get_reviews(): {e}")
+        except Exception as e:
+            print(f"Unexpected error in get_reviews(): {e}")
+
+    def get_review_info(self):
+
+        try:
+            self.get_review_cards()
+        except Exception as e:
+            print(f"Error in get_review_cards(): {e}")
+        else:
+            self.get_reviews()
+
+
+    
+            
+
+
 
 
 """
@@ -285,10 +441,20 @@ self.num_reviews = 0
 
 def test(url):
     book = BookMetaData(url)
-    book.get_info()
+    book.get_metadata()
 
     book_metadata = book.retrieve_metadata()
+    print("--- Book metadata ---")
     print(book_metadata)
+    print()
 
-url = 'https://www.goodreads.com/book/show/4894.Who_Moved_My_Cheese_An_Amazing_Way_to_Deal_with_Change_in_Your_Work_and_in_Your_Life_'
+    book.get_review_info()
+    book_reviews = book.retrieve_reviews()
+    print("--- Book reviews ---")
+    print(book_reviews)
+
+
+
+url = 'https://www.goodreads.com/book/show/4406.East_of_Eden'
+
 test(url)
