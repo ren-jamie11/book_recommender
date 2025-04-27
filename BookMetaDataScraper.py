@@ -3,17 +3,7 @@ from datetime import datetime
 import requests
 import re
 
-class RequestFailedException(Exception):
-    """Raised when a request to a URL fails."""
-    pass
-
-class RegexPatternNotFoundException(Exception):
-    """Exception raised when a regex pattern is not found."""
-    pass
-
-class SoupNotFoundException(Exception):
-    """Exception raised when bs4 html pattern not found"""
-    pass
+from CustomExceptions import *
 
 def regex_match(pattern, text):
     match = re.search(pattern, text)
@@ -300,5 +290,5 @@ def test(url):
     book_metadata = book.retrieve_metadata()
     print(book_metadata)
 
-url = 'https://www.goodreads.com/book/show/3.Harry_Potter_and_the_Sorcerer_s_Stone'
+url = 'https://www.goodreads.com/book/show/4894.Who_Moved_My_Cheese_An_Amazing_Way_to_Deal_with_Change_in_Your_Work_and_in_Your_Life_'
 test(url)
