@@ -36,11 +36,19 @@ def get_number_from_text(text, dtype = int):
     else:
         return match
 
+def clean_title_text(title_text):
+    cleaned_text = re.sub(r'title|\n', '', title_text).strip()
+    cleaned_text = re.sub(r'\s+', ' ', cleaned_text).strip()
+    cleaned_text = re.sub(r'\s*\([^)]*\)', '', cleaned_text).strip()
+
+    return cleaned_text
+
 
 class UserMetaData:
      
     def __init__(self, url):
         self.url = url
+        self.user_id = url.rsplit('/', 1)[-1]
         self.soup = None
 
         # intermediate steps
@@ -124,3 +132,128 @@ class UserMetaData:
     def verify_is_best_reviewer(self):
         best_reviewer_html = self.user_stats_html.find('a', id='tl_best_reviewers')
         
+        if best_reviewer_html:
+            self.is_best_reviewer = True
+
+            best_reviewer_text = best_reviewer_html.text
+            self.reviewer_rank = get_number_from_text(best_reviewer_text)
+    
+    def verify_is_most_followed(self):
+        best_follower_html = self.user_stats_html.find('a', id='tl_most_followed')
+
+        if best_follower_html:
+            self.is_most_followed = True
+
+            best_follower_text = best_follower_html.text
+            self.follow_rank = get_number_from_text(best_follower_text)
+
+    
+    def get_review_cards_single_page(self, user_id, i):
+        url = f'https://www.goodreads.com/review/list/{user_id}?page={i}&sort=votes&view=reviews'
+        soup = self.get_soup(url)
+        
+        if soup:
+            review_cards = soup.find_all('tr', class_ = 'bookalike review')
+            return review_cards
+        
+        return None
+    
+    def get_review_cards(self, user_id, n = 2):
+        all_review_cards = []
+
+        # make sure we don't look at empty pages
+        n = min(n, self.num_ratings // 20)
+
+        for i in range(1, n + 1):
+            review_cards = self.get_review_cards_single_page(user_id, i)
+            all_review_cards.extend(review_cards)
+
+        self.review_cards = all_review_cards
+
+    def get_title_from_review_card(self, review_card):
+
+        title_html = review_card.find('td', class_ = 'field title')
+        if title_html:
+            title_text = title_html.text
+            title_text = clean_title_text(title_text)
+
+            return title_text
+        
+        raise SoupNotFoundException(f"Couldn't find (td, field title) from review card")
+    
+
+    def get_title_url_from_review_card(self, review_card):
+        base_url = 'https://www.goodreads.com'
+
+        title_html = review_card.find('td', class_ = 'field title')
+        if title_html:
+            try:
+                title_url = title_html.a['href']
+                final_url = base_url + title_url
+                return final_url
+            except Exception as e:
+                raise SoupNotFoundException(f"Couldn't find href tag within title html: {e}")
+
+        raise SoupNotFoundException(f"Couldn't find (td, field title) from review card")
+    
+        
+    def get_rating_from_review_card(self, review_card):
+        rating_html = review_card.find('td', class_ = 'field rating')
+        if rating_html:
+            star_count_html = rating_html.find_all('span', class_ = 'staticStar p10')
+            rating = len(star_count_html)       
+            return rating
+        
+        raise SoupNotFoundException(f"Couldn't find (td, field rating) from review card")
+    
+    def get_rating_votes_from_review_card(self, review_card):
+        votes_html = review_card.find('td', class_ = 'field votes')
+        if votes_html:
+            votes_text = votes_html.text
+            votes = get_number_from_text(votes_text)
+            return votes
+        
+        raise SoupNotFoundException(f"Couldn't find (td, field votes) from review card")
+    
+    def get_review_card_info(self, review_card):
+        # Initialize review_card_dict with user_id
+        review_card_dict = {'user_id': self.user_id}
+
+        methods = [
+            (self.get_title_url_from_review_card, 'title_url'),
+            (self.get_title_from_review_card, 'title'),
+            (self.get_rating_from_review_card, 'rating'),
+            (self.get_rating_votes_from_review_card, 'votes')
+        ]
+        
+        # Loop through each method and handle exceptions individually
+        for method, dict_key in methods:
+            try:
+                result = method(review_card)
+                review_card_dict[dict_key] = result
+            except Exception as e:
+                print(f"Error in {method.__name__} for review card: {e}")
+                continue  
+        
+        return review_card_dict
+        
+
+    def get_reviews(self):
+        try:
+            reviews = [self.get_review_card_info(review) for review in self.review_cards]
+            self.reviews = reviews
+
+        except SoupNotFoundException as e:
+            print(f"SoupNotFound error in get_reviews(): {e}")
+        except RegexPatternNotFoundException as e:
+            print(f"RegexNotFound error in get_reviews(): {e}")
+        except Exception as e:
+            print(f"Unexpected error in get_reviews(): {e}")
+
+    def get_review_info(self):
+        try:
+            self.get_review_cards(user_id = self.user_id)
+        except Exception as e:
+            print(f"Error in get_review_cards(): {e}")
+        else:
+            self.get_reviews()
