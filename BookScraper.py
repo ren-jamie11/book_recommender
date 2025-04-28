@@ -56,7 +56,7 @@ class BookMetaData:
 
         # reviews
         self.review_cards = []
-        self.reviews = dict()
+        self.reviews = []
         
 
     def retrieve_metadata(self):
@@ -366,7 +366,16 @@ class BookMetaData:
 
         except Exception as e:
             raise SoupNotFoundException(f"Could not find user url from review card")
-
+        
+    def get_user_id_from_review_card(self, review_card):
+        user_url = self.get_user_url_from_review_card(review_card)
+        
+        try:
+            user_id = user_url.rsplit('/', 1)[-1]
+            return user_id
+        except Exception as e:
+            return RegexPatternNotFoundException(f"Unable to find user_id from user_url")
+        
 
     def get_user_rating_text_from_review_card(self, review_card):
 
@@ -399,22 +408,22 @@ class BookMetaData:
             print(f"Error getting user_rating: {e}")
     
     def get_review_card_dict(self, i, review_card):
-        res = dict()
+        res = {'title': self.title}
 
         try:
-            res['user'] = self.get_user_url_from_review_card(review_card)
+            res['user_id'] = self.get_user_id_from_review_card(review_card)
             res['rating'] = self.get_user_rating_from_review_card(review_card)
         except SoupNotFoundException as e:
             print(f"SoupNotFound error review card {i}: {e}")
-            res['user'] = None  
+            res['user_id'] = None  
             res['rating'] = None  
         except RegexPatternNotFoundException as e:
             print(f"RegexNotFound review card {i}: {e}")
-            res['user'] = None  
+            res['user_id'] = None  
             res['rating'] = None  
         except Exception as e:
             print(f"Unexpected review card {i}: {e}")
-            res['user'] = None
+            res['user_id'] = None
             res['rating'] = None
 
         return res
@@ -423,7 +432,8 @@ class BookMetaData:
     def get_reviews(self):
 
         try: 
-            reviews = {d["user"]: d["rating"] for d in (self.get_review_card_dict(i, r) for i, r in enumerate(self.review_cards))}
+            reviews = [self.get_review_card_dict(i, r) for i, r in enumerate(self.review_cards)]
+            # reviews = {d["user"]: d["rating"] for d in (self.get_review_card_dict(i, r) for i, r in enumerate(self.review_cards))}
             self.reviews = reviews 
 
         except SoupNotFoundException as e:

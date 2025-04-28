@@ -259,10 +259,11 @@ class UserMetaData:
         if title_html:
             try:
                 title_url = title_html.a['href']
-                final_url = base_url + title_url
-                return final_url
+                title_url = title_url.rsplit('/', 1)[-1]
+                
+                return title_url
             except Exception as e:
-                raise SoupNotFoundException(f"Couldn't find href tag within title html: {e}")
+                raise SoupNotFoundException(f"title url from review card error: {e}")
 
         raise SoupNotFoundException(f"Couldn't find (td, field title) from review card")
     
@@ -290,7 +291,7 @@ class UserMetaData:
         review_card_dict = {'user_id': self.user_id}
 
         methods = [
-            (self.get_title_url_from_review_card, 'title_url'),
+            (self.get_title_url_from_review_card, 'title_id'),
             (self.get_title_from_review_card, 'title'),
             (self.get_rating_from_review_card, 'rating'),
             (self.get_rating_votes_from_review_card, 'votes')
