@@ -71,6 +71,24 @@ class UserMetaData:
         self.reviews = []
 
 
+    def retrieve_metadata(self):
+
+        return {
+            'user_url': self.url,
+            'user_id': self.user_id,
+            'name': self.name,
+            'num_ratings': self.num_ratings,
+            'avg_rating': self.avg_rating,
+            'num_reviews': self.num_reviews,
+            'is_best_reviewer': self.is_best_reviewer,
+            'reviewer_rank': self.reviewer_rank,
+            'is_most_followed': self.is_most_followed,
+            'follow_rank': self.follow_rank
+        }
+    
+    def retrieve_reviews(self):
+        return self.reviews
+        
     def get_soup(self, headers_list = headers_list):
         for header in headers_list:
             response = requests.get(self.url, headers=header)
@@ -126,6 +144,8 @@ class UserMetaData:
             self.avg_rating = get_number_from_text(avg_ratings_text, dtype = float)
             self.num_reviews = get_number_from_text(num_reviews_text)
 
+            return True
+
         raise SoupNotFoundException(f"Couldn't find any 'a' links in user_stats_html")
     
 
@@ -146,6 +166,39 @@ class UserMetaData:
 
             best_follower_text = best_follower_html.text
             self.follow_rank = get_number_from_text(best_follower_text)
+
+
+    def get_metadata(self):
+        try:
+            self.get_soup()  
+        except Exception as e:
+            print(f"Error in get_soup: {e}")
+            return  
+        
+        try:
+            self.get_name_from_html() 
+        except Exception as e:
+            print(f"Error in get_name_from_html: {e}")
+
+
+        try:
+            self.get_user_stats_html()
+        except Exception as e:
+            print(f"Error in get_user_stats_html: {e}")
+            return  
+        
+        methods = [
+            self.get_stats_from_user_stats_html,
+            self.verify_is_best_reviewer,
+            self.verify_is_most_followed
+        ]
+    
+        for method in methods:
+            try:
+                method()  
+            except Exception as e:
+                print(f"Error in {method.__name__} for {self.user_id}: {e}")
+                continue  
 
     
     def get_review_cards_single_page(self, user_id, i):
@@ -251,9 +304,29 @@ class UserMetaData:
             print(f"Unexpected error in get_reviews(): {e}")
 
     def get_review_info(self):
+        
+        
         try:
             self.get_review_cards(user_id = self.user_id)
         except Exception as e:
             print(f"Error in get_review_cards(): {e}")
         else:
             self.get_reviews()
+
+
+def test(url):
+    user = UserMetaData(url)
+    user.get_metadata()
+
+    user_metadata = user.retrieve_metadata()
+    print("--- User metadata ---")
+    print(user_metadata)
+    print()
+
+    user.get_review_info()
+    user_reviews = user.retrieve_reviews()
+    print("--- User reviews ---")
+    print(user_reviews)
+
+url = 'https://www.goodreads.com/user/show/159234716-zo'
+test(url)
