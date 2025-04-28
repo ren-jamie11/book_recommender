@@ -48,6 +48,12 @@ class BookMetaData:
         self.num_reviews = 0
         self.ratings_histogram = dict()
 
+        self.five_star_ratings = 0
+        self.four_star_ratings = 0
+        self.three_star_ratings = 0
+        self.two_star_ratings = 0
+        self.one_star_ratings = 0
+
         # reviews
         self.review_cards = []
         self.reviews = dict()
@@ -64,7 +70,11 @@ class BookMetaData:
             'rating': self.rating,
             'num_ratings': self.num_ratings,
             'num_reviews': self.num_reviews,
-            'ratings_histogram': self.ratings_histogram,
+            'five_stars': self.five_star_ratings,
+            'four_stars': self.four_star_ratings,
+            'three_stars': self.three_star_ratings,
+            'two_stars': self.two_star_ratings,
+            'one_star': self.one_star_ratings
         }
     
     def retrieve_reviews(self):
@@ -284,6 +294,13 @@ class BookMetaData:
         self.ratings_histogram = histogram
 
 
+    def get_ratings_for_each_star(self):
+        self.five_star_ratings = self.ratings_histogram[5]
+        self.four_star_ratings = self.ratings_histogram[4]
+        self.three_star_ratings = self.ratings_histogram[3]
+        self.two_star_ratings = self.ratings_histogram[2]
+        self.one_star_ratings = self.ratings_histogram[1]
+
     def get_metadata(self):
         try:
             self.get_soup()  # Try to fetch the soup
@@ -310,7 +327,8 @@ class BookMetaData:
             self.get_publish_date,
             self.get_ratings_histogram_html_content,
             self.get_ratings_info,
-            self.get_ratings_histogram
+            self.get_ratings_histogram,
+            self.get_ratings_for_each_star
         ]
         
         # Loop through each method and handle exceptions individually
@@ -372,17 +390,16 @@ class BookMetaData:
 
 
     def get_user_rating_from_review_card(self, review_card):
-        rating_text = self.get_user_rating_text_from_review_card(review_card)
-        rating = self.get_rating_from_rating_text(rating_text)
+        try:
+            rating_text = self.get_user_rating_text_from_review_card(review_card)
+            rating = self.get_rating_from_rating_text(rating_text)
 
-        return rating
+            return rating
+        except Exception as e:
+            print(f"Error getting user_rating: {e}")
     
     def get_review_card_dict(self, i, review_card):
         res = dict()
-
-
-        res['user'] = self.get_user_url_from_review_card(review_card)
-        res['rating'] = self.get_user_rating_from_review_card(review_card)
 
         try:
             res['user'] = self.get_user_url_from_review_card(review_card)
@@ -402,6 +419,7 @@ class BookMetaData:
 
         return res
 
+    # make sure it can run even if 1 review fails...
     def get_reviews(self):
 
         try: 
@@ -436,22 +454,22 @@ self.num_reviews = 0
 """
 
 
-# def test(url):
-#     book = BookMetaData(url)
-#     book.get_metadata()
+def test(url):
+    book = BookMetaData(url)
+    book.get_metadata()
 
-#     book_metadata = book.retrieve_metadata()
-#     print("--- Book metadata ---")
-#     print(book_metadata)
-#     print()
+    book_metadata = book.retrieve_metadata()
+    print("--- Book metadata ---")
+    print(book_metadata)
+    print()
 
-#     book.get_review_info()
-#     book_reviews = book.retrieve_reviews()
-#     print("--- Book reviews ---")
-#     print(book_reviews)
+    book.get_review_info()
+    book_reviews = book.retrieve_reviews()
+    print("--- Book reviews ---")
+    print(book_reviews)
 
 
 
-# url = 'https://www.goodreads.com/book/show/4406.East_of_Eden'
+url = 'https://www.goodreads.com/book/show/4406.East_of_Eden'
 
-# test(url)
+test(url)

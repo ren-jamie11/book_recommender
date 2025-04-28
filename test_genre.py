@@ -1,5 +1,5 @@
 
-from BookMetaDataScraper import *
+from BookScraper import *
 import pandas as pd
 import numpy as np
 
@@ -20,7 +20,7 @@ urls = get_urls_from_txt_file(file)
 book_metadatas = [dict()] * len(urls)
 book_reviews = [dict()] * len(urls)
 
-for i, url in enumerate(urls[:10]):
+for i, url in enumerate(urls[:5]):
     print("Parsing url", url)
 
     start_time = time.time()  # Start time for each iteration
