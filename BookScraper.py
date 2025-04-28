@@ -464,22 +464,22 @@ self.num_reviews = 0
 """
 
 
-def test(url):
-    book = BookMetaData(url)
-    book.get_metadata()
+# def test(url):
+#     book = BookMetaData(url)
+#     book.get_metadata()
 
-    book_metadata = book.retrieve_metadata()
-    print("--- Book metadata ---")
-    print(book_metadata)
-    print()
+#     book_metadata = book.retrieve_metadata()
+#     print("--- Book metadata ---")
+#     print(book_metadata)
+#     print()
 
-    book.get_review_info()
-    book_reviews = book.retrieve_reviews()
-    print("--- Book reviews ---")
-    print(book_reviews)
+#     book.get_review_info()
+#     book_reviews = book.retrieve_reviews()
+#     print("--- Book reviews ---")
+#     print(book_reviews)
 
 
 
-url = 'https://www.goodreads.com/book/show/4406.East_of_Eden'
+# url = 'https://www.goodreads.com/book/show/4406.East_of_Eden'
 
-test(url)
+# test(url)
