@@ -38,7 +38,7 @@ def book_data_generator(urls, n):
         yield book_metadata, book_review_dict
 
 
-def scrape_books_from_genre(genre_name, n = 1000):
+def scrape_books_from_genre(genre_name, n = 500):
     file = f'book_urls/{genre_name}.txt'
     urls = get_urls_from_txt_file(file)
 
@@ -61,5 +61,4 @@ def scrape_books_from_genre(genre_name, n = 1000):
     
 
 example_genres = genres
-
-Parallel(n_jobs=min(20, len(example_genres)))(delayed(scrape_books_from_genre)(genre, n=3) for genre in example_genres)
+Parallel(n_jobs=min(10, len(example_genres)))(delayed(scrape_books_from_genre)(genre, n=500) for genre in example_genres)
