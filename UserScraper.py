@@ -89,7 +89,7 @@ class UserMetaData:
     def retrieve_reviews(self):
         return self.reviews
         
-    def get_soup(self, headers_list = headers_list):
+    def set_soup(self, headers_list = headers_list):
         for header in headers_list:
             response = requests.get(self.url, headers=header)
             source = response.text
@@ -105,6 +105,23 @@ class UserMetaData:
                     continue
 
         raise RequestFailedException(f"Failed to fetch URL: {self.url}")
+    
+    def get_soup(self, url, headers_list = headers_list):
+        for header in headers_list:
+            response = requests.get(url, headers=header)
+            source = response.text
+
+            if len(source) > 10000:
+                soup = BeautifulSoup(source, "lxml")
+
+                if soup:
+                    return soup
+                
+                else:
+                    continue
+
+        raise RequestFailedException(f"Failed to fetch URL: {url}")
+
 
     
     def get_name_from_html(self):
@@ -170,9 +187,9 @@ class UserMetaData:
 
     def get_metadata(self):
         try:
-            self.get_soup()  
+            self.set_soup()  
         except Exception as e:
-            print(f"Error in get_soup: {e}")
+            print(f"Error in set_soup: {e}")
             return  
         
         try:
@@ -305,6 +322,7 @@ class UserMetaData:
 
     def get_review_info(self):
         
+        self.get_review_cards(user_id = self.user_id)
         
         try:
             self.get_review_cards(user_id = self.user_id)
@@ -327,6 +345,7 @@ def test(url):
     user_reviews = user.retrieve_reviews()
     print("--- User reviews ---")
     print(user_reviews)
+    print(len(user_reviews))
 
 url = 'https://www.goodreads.com/user/show/159234716-zo'
 test(url)
