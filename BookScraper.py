@@ -340,7 +340,7 @@ class BookMetaData:
                 continue  # Move on to the next one even if this one fails
 
 
-    def get_review_cards(self, n = 10):
+    def get_review_cards(self, n = 30):
         soup = self.soup
         if soup:
             review_cards = soup.find_all('article', class_ = 'ReviewCard')
