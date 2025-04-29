@@ -46,7 +46,7 @@ def clean_title_text(title_text):
 
 class UserMetaData:
      
-    def __init__(self, url):
+    def __init__(self, url, review_pages = 2):
         self.url = url
         self.user_id = url.rsplit('/', 1)[-1]
         self.soup = None
@@ -67,6 +67,7 @@ class UserMetaData:
         self.follow_rank = 0    
 
         # reviews
+        self.review_pages = review_pages
         self.review_cards = []
         self.reviews = []
 
@@ -227,11 +228,12 @@ class UserMetaData:
         
         return None
     
-    def get_review_cards(self, user_id, n = 2):
+    def get_review_cards(self, user_id):
         all_review_cards = []
 
         # make sure we don't look at empty pages
-        n = min(n, self.num_ratings // 20)
+        n = self.review_pages
+        n = min(n, self.num_ratings // 20) + 1
 
         for i in range(1, n + 1):
             review_cards = self.get_review_cards_single_page(user_id, i)
@@ -332,22 +334,22 @@ class UserMetaData:
             self.get_reviews()
 
 
-def test(url):
-    user = UserMetaData(url)
-    user.get_metadata()
+# def test(url):
+#     user = UserMetaData(url, review_pages=4)
+#     user.get_metadata()
 
-    user_metadata = user.retrieve_metadata()
-    print("--- User metadata ---")
-    print(user_metadata)
-    print()
+#     user_metadata = user.retrieve_metadata()
+#     print("--- User metadata ---")
+#     print(user_metadata)
+#     print()
 
-    user.get_review_info()
-    user_reviews = user.retrieve_reviews()
-    print("--- User reviews ---")
-    print(user_reviews)
-    print(len(user_reviews))
+#     user.get_review_info()
+#     user_reviews = user.retrieve_reviews()
+#     print("--- User reviews ---")
+#     print(user_reviews)
+#     print(len(user_reviews))
 
-url = 'https://www.goodreads.com/user/show/159234716-zo'
+# url = 'https://www.goodreads.com/user/show/159234716-zo'
 
-url = 'https://www.goodreads.com/user/show/31207039'
-test(url)
+# url = 'https://www.goodreads.com/user/show/153156500-michelle-lee'
+# test(url)
