@@ -123,7 +123,6 @@ class UserMetaData:
         raise RequestFailedException(f"Failed to fetch URL: {url}")
 
 
-    
     def get_name_from_html(self):
         soup = self.soup
         name_html = soup.find('h1', class_ = 'userProfileName')
@@ -349,4 +348,6 @@ def test(url):
     print(len(user_reviews))
 
 url = 'https://www.goodreads.com/user/show/159234716-zo'
+
+url = 'https://www.goodreads.com/user/show/31207039'
 test(url)
