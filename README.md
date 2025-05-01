@@ -25,6 +25,15 @@ Specifically, you would value the suggestions avid readers who exhibit the same 
 
 ## The math 
 
+#### User item matrix
+
+One of the most intuitive (and well-established) ways to encode user ratings of books is via a *user-item matrix*, where $M_{ij}$ is the rating of user $i$ for item $j$. From the tuple (title, user_id, rating) and the genre tags of each book, it is easy to construct both the *user-item matrix* as well as a *genre-user matrix*, where $G_{ij}$ is the number of books that that user $j$ has from genre $i$.   
+
+
+
+#### User similarity
+
+#### Relative expertise
 
 
 
