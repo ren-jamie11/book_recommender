@@ -116,7 +116,9 @@ These are the books suggested to me based on the top 50 users with similar genre
 
 
 
-The counts are small because the book universe is enormous (relative to amount of data my laptop can efficiently work with), so it is relatively hard to find many users with overlapping books. However, I am quite satisfied with these recommendations, as the recommender noticed that I like philosophy/self-help books and suggested books that similar users loved. Notice that the k-nearest users' ratings of these books are significantly higher than the overall ratings (expressing the principle that ratings of similar users are more relevant). 
+I am quite satisfied with these recommendations, as the recommender noticed that I like philosophy/self-help books and suggested books that similar users loved. Notice that the k-nearest users' ratings of these books are significantly higher than the overall ratings (expressing the principle that ratings of similar users are more relevant). 
+
+The counts (of the 50-nearest users who have read each book) are small because the book universe is enormous (relative to amount of data my laptop can efficiently work with), so it is relatively hard to find many users with overlapping books. 
 
 
 
