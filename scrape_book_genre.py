@@ -39,6 +39,9 @@ def book_data_generator(urls, n):
 
 
 def scrape_books_from_genre(genre_name, n = 500):
+    """ Scrape book urls from txt file and store data into parquet
+        Each txt file contains urls from a genre"""
+
     file = f'book_urls/{genre_name}.txt'
     urls = get_urls_from_txt_file(file)
 
