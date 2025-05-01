@@ -49,7 +49,7 @@ $$
 z_{ub} = \frac{r_{ub} - \mu_{b}}{\sigma_b} 
 $$
 
-where $r_{ub}$ is user $u$'s rating of book $b$, with $\mu_b$ and $\sigma_{b}$ being the mean and standard deviation of each book's ratings, respectively. $\mu_b$ and $\sigma_{b}$ can be computed from the number of ratings given from 1-star to 5-stars. 
+where $r_{ub}$ is user $u$'s rating of book $b$, with $\mu_b$ and $\sigma_{b}$ being the mean and standard deviation of each book's ratings, respectively. $\mu_b$ and $\sigma_{b}$ can be computed from the number of 1-star...5-star ratings.
 
 **Mean-centered ratings**
 
