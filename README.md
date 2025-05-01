@@ -7,6 +7,10 @@ This recommender uses a vast amount of data scraped from Goodreads to provide qu
 2. 175,576 users
 3. 476,199 ratings
 
+#### Example: My recs
+
+<img src="https://github.com/ren-jamie11/book_recommender/blob/main/assets/my_recs.png" alt="Alt text" width="800">
+
 #### How it works
 
 All you need is to enter your Goodreads user_id, and it will:
@@ -116,7 +120,7 @@ Basically, add up the normalized ratings of each of the k-nearest users weighted
 
 These are the books suggested to me based on the top 50 users with similar genre preferences as me.
 
-
+<img src="https://github.com/ren-jamie11/book_recommender/blob/main/assets/genre_recs.png" alt="Alt text" width="500">
 
 I am quite satisfied with these recommendations, as the recommender noticed that I like philosophy/self-help books and suggested books that similar users loved. Notice that the k-nearest users' ratings of these books are significantly higher than the overall ratings (expressing the principle that ratings of similar users are more relevant). 
 
