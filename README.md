@@ -25,11 +25,11 @@ Specifically, you would value the suggestions avid readers who exhibit the same 
 
 ## The math 
 
-#### User item matrix
+### User item matrix
 
 One of the most intuitive (and well-established) ways to encode user ratings of books is via a *user-item matrix*, where $M_{ij}$ is the rating of user $i$ for item $j$. From the tuple (title, user_id, rating) and the genre tags of each book, it is easy to construct both the *user-item matrix* as well as a *genre-user matrix*, where $G_{ij}$ is the number of books that that user $j$ has from genre $i$.   
 
-#### Normalizing ratings
+### Normalizing ratings
 
 The problem with directly using ratings its true information content depends on both
 1. The average ratings that the user gives
@@ -65,22 +65,26 @@ where $B_u$ is the set of all books that user $u$ has rated.
 
 This normalization procedure will make comparison between ratings for different books and users significantly more meaningful.
 
-#### User similarity
+### User similarity
 
 Having constructed the normalized user-item matrix, we can compare similarity between 2 users using *cosine similarity*, which is 
 
 $$
 \frac{
-\sum_{k \in I_u \cap I_v} (r_{uk} - \mu_u)(r_{vk} - \mu_v)
+\sum_{k \in B_u \cap B_v} s_{ub} \cdot s_{vb}
 }{
-\sqrt{\sum_{k \in I_u \cap I_v} (r_{uk} - \mu_u)^2} \cdot \sqrt{\sum_{k \in I_u \cap I_v} (r_{vk} - \mu_v)^2}
+\sqrt{\sum_{k \in B_u \cap B_v} s_{ub}^2} \cdot \sqrt{\sum_{k \in B_u \cap B_v} s_{vb}^2}
 }
 $$
 
+Intuitively, if we treated the ratings (or genre reading pct) for users $u$ and $v$ as 2 vectors, the above finds the cosine of the "angle" between the 2, which is a value from -1 to 1. Note that we are only using books that both these 2 users have read. 
 
-$$
+**Example**
 
-#### Relative expertise
+For instance, this is a snapshot of the genre reading pcts of me vs. another user with a genre cosine similarity of 0.94. 
+
+
+### Relative expertise
 
 
 
