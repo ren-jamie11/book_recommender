@@ -131,7 +131,7 @@ These are the books suggested to me based on the top 50 users with similar genre
 <img src="https://github.com/ren-jamie11/book_recommender/blob/main/assets/genre_recs.png" alt="Alt text" width="600">
 </br>
 
-I am quite satisfied with these recommendations, as it noticed that I like philosophy/self-help books (Yes, don't judge me :blush: I had a phase in college) and suggested books that similar users rated highly. Notice that the k-nearest users' ratings of these books are significantly higher than the overall ratings (expressing the principle that ratings of similar users are more relevant). 
+I am quite satisfied with these recommendations, as it noticed that I like philosophy/self-help books (Yes, don't judge me :blush: I had a phase in college) and suggested books that similar users rated highly. Notice that the k-nearest users' ratings of these books are significantly higher than the overall ratings (applying the principle that ratings of similar users are more relevant). 
 
 The counts (of the 50-nearest users who have read each book) are surprisingly small, but that goes to show the reading choices among even similar users are quite diverse. It is also because the universe of books is absolutely enormous.
 
