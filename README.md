@@ -16,7 +16,7 @@ This recommender uses a vast amount of data scraped from Goodreads to provide qu
 All you need is to enter your Goodreads user_id, and it will:
 
 1. Automatically pull your book ratings from the Goodreads website  
-2. Provide 3 types of recommendations from:
+2. Provide 3 types of recommendations based on:
    - Informed users with similar genre reading patterns as you  
    - Informed users with similar ratings opinions as you  
    - Top readers of your favorite genre
