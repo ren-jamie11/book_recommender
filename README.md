@@ -174,6 +174,12 @@ To ensure depth and breadth of genres, we do the following for each of the 40 ma
 3. Get top 5 most liked reviews for each user_id (5x our book coverage)
 4. Get top 30 reviews for each of these new books
 
+</br>
+
+<img src="https://github.com/ren-jamie11/book_recommender/blob/main/assets/data_flow.png" alt="Alt text" width="1000">
+</br>
+
+
 Of course, there are overlaps between books that users have rated, and the scraper was unable to load user profiles around 1/4 of the time. However, this was still an effective method to get a wide and high-quality selection of books. After data cleaning (discarding missing user/book values and filtering for English books/reviews only), we ended up with:
 1. 16,575 books
 2. 175,576 users
@@ -181,7 +187,8 @@ Of course, there are overlaps between books that users have rated, and the scrap
 
 ### Scraping
 
-This data was scraped using *Beautiful Soup*: https://beautiful-soup-4.readthedocs.io/en/latest/
+This data was scraped using *Beautiful Soup*: https://beautiful-soup-4.readthedocs.io/en/latest/ </br>
+
 I built the BookScraper and UserScraper from scratch, which I used to retrieve the data from goodreads. Since each webpage takes around 2 seconds to retrieve with requests, I also used joblib to parallelize the task. Otherwise, scraping 4000 x 30 x 5 x 30 = 18M sites would take...around 10,000 hours! (Of course, there is overlap between genres/users, but you get the idea...)
 
 ### Efficiency & memory management
