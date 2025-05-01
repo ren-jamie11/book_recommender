@@ -58,10 +58,10 @@ $$
 where the average rating for user $u$, denoted $\( \mu_u \)$, is defined by:
 
 $$
-\mu_u = \frac{\sum_{b \in B_u} z_{ub}}{|I_u|} 
+\mu_u = \frac{\sum_{b \in I_u} z_{ub}}{|I_u|} 
 $$
 
-where $B_u$ is the set of all books that user $u$ has rated.
+where $I_u$ is the set of all books that user $u$ has rated.
 
 This normalization procedure will make comparison between ratings for different books and users significantly more meaningful.
 
@@ -70,10 +70,10 @@ This normalization procedure will make comparison between ratings for different 
 Having constructed the normalized user-item matrix, we can compare similarity between 2 users using *cosine similarity*, which is 
 
 $$
-\frac{
-\sum_{k \in B_u \cap B_v} s_{ub} \cdot s_{vb}
+q_{uv} = \frac{
+\sum_{k \in I_u \cap I_v} s_{ub} \cdot s_{vb}
 }{
-\sqrt{\sum_{k \in B_u \cap B_v} s_{ub}^2} \cdot \sqrt{\sum_{k \in B_u \cap B_v} s_{vb}^2}
+\sqrt{\sum_{k \in I_u \cap I_v} s_{ub}^2} \cdot \sqrt{\sum_{k \in I_u \cap I_v} s_{vb}^2}
 }
 $$
 
@@ -81,9 +81,44 @@ Intuitively, if we treated the ratings (or genre reading pct) for users $u$ and 
 
 **Example**
 
-For instance, this is a snapshot of the genre reading pcts of me vs. another user with a genre cosine similarity of 0.94. 
+For instance, this is a snapshot of the genre reading pcts of me vs. another user with a genre cosine similarity of 0.94. Pretty alike, right!?
 
-<img src="https://github.com/ren-jamie11/book_recommender/blob/main/assets/cosine_similarity.png" alt="Alt text" width="500">
+<img src="https://github.com/ren-jamie11/book_recommender/blob/main/assets/cos_similarity.png" alt="Alt text" width="250">
+
+I did not include all 40 genres in this image, and the probabilities do not add up to 1 because each book has multiple genre tags.
+
+### Using similar users to recommend books
+
+Having measured the similarity of each user relative to the target user, the next steps are:
+
+1. Choose the top \( k \) most similar users (e.g.,  $k = 10$ or $k = 50$).
+2. Compute each user's *amount-of-say*, defined as:
+
+$$
+w_u = \frac{q_{ut}}{\sum_{i=1}^{k} q_{it}}
+$$
+
+3. Compute the neighborhood-user score $S_j$ for book $j$, defined as
+   
+$$
+S_{j} = \sum_{u \in B_j} w_u \cdot s_{uj}
+$$
+
+where $B_j$ is the set of all k-nearest users who have read book $j$.
+
+Basically, add up the normalized ratings of each of the k-nearest users weighted by their similarity to you. Intuitively, this function favor books:
+   - Read by many users similar to you
+   - Rated highly by users similar to you
+
+**Example**
+
+These are the books suggested to me based on the top 50 users with similar genre preferences as me.
+
+
+
+The counts are small because the book universe is enormous (relative to amount of data my laptop can efficiently work with), so it is relatively hard to find many users with overlapping books. However, I am quite satisfied with these recommendations, as the recommender noticed that I like philosophy/self-help books and suggested books that similar users loved. Notice that the k-nearest users' ratings of these books are significantly higher than the overall ratings (expressing the principle that ratings of similar users are more relevant). 
+
+
 
 ### Relative expertise
 
