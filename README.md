@@ -7,11 +7,11 @@ This recommender uses a vast amount of data scraped from Goodreads to provide qu
 2. 175,576 users
 3. 476,199 ratings
 
-#### Example: My recs
+### Example: My recs
 
-<img src="https://github.com/ren-jamie11/book_recommender/blob/main/assets/my_recs.png" alt="Alt text" width="800">
+<img src="https://github.com/ren-jamie11/book_recommender/blob/main/assets/my_recs_updated.png" alt="Alt text" width="1200">
 
-#### How it works
+### How it works
 
 All you need is to enter your Goodreads user_id, and it will:
 
@@ -21,7 +21,7 @@ All you need is to enter your Goodreads user_id, and it will:
    - Informed users with similar ratings opinions as you  
    - Top readers of your favorite genre
   
-#### Why it works
+### Why it works
 
 The recommender leverages the expertise and experience of readers who are both *similar to you* and *informed*. 
 When deciding on which book to read, you would probably look at the overall ratings and ratings count. However, not every rating from every reader is relevant to you, as people have different tastes.
@@ -120,17 +120,47 @@ Basically, add up the normalized ratings of each of the k-nearest users weighted
 
 These are the books suggested to me based on the top 50 users with similar genre preferences as me.
 
-<img src="https://github.com/ren-jamie11/book_recommender/blob/main/assets/genre_recs.png" alt="Alt text" width="500">
+</br>
+
+<img src="https://github.com/ren-jamie11/book_recommender/blob/main/assets/genre_recs.png" alt="Alt text" width="600">
+</br>
 
 I am quite satisfied with these recommendations, as the recommender noticed that I like philosophy/self-help books and suggested books that similar users loved. Notice that the k-nearest users' ratings of these books are significantly higher than the overall ratings (expressing the principle that ratings of similar users are more relevant). 
 
 The counts (of the 50-nearest users who have read each book) are small because the book universe is enormous (relative to amount of data my laptop can efficiently work with), so it is relatively hard to find many users with overlapping books. 
 
+The above recommendation is biased towards highly popular books that many have read. To make the recommendations more "interesting" or "serendipitous", one can adjust the weightings by the inverse frequency of each book to promote books that are both relevant but not known to many people.
 
+### Genre relative preference & expertise
 
-### Relative expertise
+#### Preference
 
+To identify a target user's favorite genres, we again use the z-score idea to find "how much does this user's reading pct of this genre deviate from the mean for that genre?" 
 
+$$ z_{ug} = \frac{p_{ug} - \mu_{g}}{\sigma_g}
+$$ 
+
+where $p_{ug}$ is the % of user $u$'s ratings that are from genre $g$, $\mu_{g}$ and $\sigma_g$ being the mean, std of % of ratings that are from genre $g$ for all users.
+
+#### Expertise
+
+Intuitively, a user is considered "specialized" in a genre if:
+1. She has read a lot of books from that genre.
+2. Most of the books she's read are from this genre
+
+We can easily express this in the expression 
+
+$$
+\phi_{ug} = n_{ug} \cdot p_{ug}^\alpha 
+$$
+
+- $n_{ug}$: Number of books user $u$ has read from genre $g$
+- $p_{ug}$: Pct of user $u$'s ratings that are from genre $g$
+- $\alpha$: Hyperparameter
+
+For instance, who is more specialized in fantasy books - someone who has read 48 fantasy books, constituting 30% of his books, or someone who has read 18 fantasy books, constituting 88% of her books? The $\alpha$ hyperparameter tunes this weighting. 
+
+After retrieving the preference/expertise scores of each user for each genre, we can then use the top users for a genre to recommend books for that genre (in similar fashion to how we used k-nearest users to recommend books for a target user).
 
 ## The data
 
