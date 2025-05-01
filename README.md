@@ -195,6 +195,11 @@ I built the BookScraper and UserScraper from scratch, which I used to retrieve t
 
 Because we would like the recommender to output results in a resonable time frame (<10 seconds), it would be infeasible to use the full user-item matrix (~384GB). Therefore, we only included the 9,396 users that provided the top 30 reviews from the original 4,000 books. Thus, the user-item matrix used was 9,396 x 16,575 (1.3GB). This made computations feasible without loss of quality, because the remaining users contain far less info than users who provided the top reviews for Goodreads' most popular books.
 
+### Sources
+
+[Recommender Systems: The Textbook](https://pzs.dstu.dp.ua/DataMining/recom/bibl/1aggarwal_c_c_recommender_systems_the_textbook.pdf) </br>
+Aggarwal, Charu C. Recommender Systems: The Textbook. Springer, 2016. 
+
 
 
 
