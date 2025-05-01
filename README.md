@@ -3,7 +3,7 @@
 ### Get relevant and interesting recommendations instantly from your Goodreads account!
 
 This recommender uses a vast amount of data scraped from Goodreads to provide quality personalized recommendations for you. It uses data from:
-1. 16,578 books
+1. 16,575 books
 2. 175,576 users
 3. 476,199 ratings
 
@@ -81,7 +81,13 @@ q_{uv} = \frac{
 }
 $$
 
-Intuitively, if we treated the ratings (or genre reading pct) for users $u$ and $v$ as 2 vectors, the above finds the cosine of the "angle" between the 2, which is a value from -1 to 1. Note that we are only using books that both these 2 users have read. 
+Intuitively, if we treated the ratings (or genre reading pct) for users $u$ and $v$ as 2 vectors, the above finds the cosine of the "angle" between the 2, which is a value from -1 to 1.
+
+#### Important detail: Omit zeros
+
+Note that we are only using books that both these 2 users have read, as the majority of the 16,575 book ratings for a user will be 0. It would be incorrect to include the 0s, because doing so would mean that both users gave the book a rating of 0, when in reality we do not know what rating those 2 users would have given.
+
+However, it is empirically ok to include 0s when computing cosine similarity of the 40 genre pcts, because in this case, most of the genre pct values are non-zero, and a genre pct of 0 is representative of the truth (which is that the user does not like reading books from that genre). 
 
 **Example**
 
@@ -112,7 +118,7 @@ $$
 
 where $B_j$ is the set of all k-nearest users who have read book $j$.
 
-Basically, add up the normalized ratings of each of the k-nearest users weighted by their similarity to you. Intuitively, this function favor books:
+Basically, add up the normalized ratings of each of the k-nearest users weighted by their similarity to you. Intuitively, this function favors books:
    - Read by many users similar to you
    - Rated highly by users similar to you
 
