@@ -102,7 +102,7 @@ $$
 w_u = \frac{q_{ut}}{\sum_{i=1}^{k} q_{it}}
 $$
 
-where $q_{ut}$ is the simiarity of user $u$ to target user $t$.
+where $q_{ut}$ is the simiarity of user $u$ to target user $t$. Intuitvely, it is the normalized similarity score of the k-nearest users.
 
 3. Compute the neighborhood-user score $S_j$ for book $j$, defined as
    
@@ -163,6 +163,27 @@ For instance, who is more specialized in fantasy books - someone who has read 48
 After retrieving the preference/expertise scores of each user for each genre, we can then use the top users for a genre to recommend books for that genre (in similar fashion to how we used k-nearest users to recommend books for a target user).
 
 ## The data
+
+### Data collection
+
+To ensure depth and breadth of genres, we do the following for each of the 40 main genres defined by Goodreads: https://www.goodreads.com/genres
+1. Get top 50 books from this genre
+2. Get top 30 reviews for each book (title, user_id, rating)
+3. Get top 5 most liked reviews for each user_id (5x our book coverage)
+4. Get top 30 reviews for each of these new books
+
+Of course, there are overlaps between books that users have rated, and the scraper was unable to load user profiles around 1/4 of the time. However, this was still an effective method to get a wide and high-quality selection of books. After data cleaning (discarding missing user/book values and filtering for English books/reviews only), we ended up with:
+1. 16,578 books
+2. 175,576 users
+3. 476,199 ratings
+
+### Scraping
+
+### Efficiency & memory management
+
+
+
+
 
 
 
