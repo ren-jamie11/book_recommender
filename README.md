@@ -83,6 +83,7 @@ Intuitively, if we treated the ratings (or genre reading pct) for users $u$ and 
 
 For instance, this is a snapshot of the genre reading pcts of me vs. another user with a genre cosine similarity of 0.94. 
 
+<img src="https://github.com/ren-jamie11/book_recommender/blob/main/assets/cosine_similarity.png" alt="Alt text" width="500">
 
 ### Relative expertise
 
