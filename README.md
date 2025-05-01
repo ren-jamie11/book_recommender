@@ -164,6 +164,8 @@ After retrieving the preference/expertise scores of each user for each genre, we
 
 ## The data
 
+Collecting (and cleaning) the data was no easy task. Fortunately, the Goodreads site is very organized, consistent, and lenient when allowing bots to scrape the site. So, thank you!!!
+
 ### Data collection
 
 To ensure depth and breadth of genres, we do the following for each of the 40 main genres defined by Goodreads: https://www.goodreads.com/genres
@@ -173,14 +175,18 @@ To ensure depth and breadth of genres, we do the following for each of the 40 ma
 4. Get top 30 reviews for each of these new books
 
 Of course, there are overlaps between books that users have rated, and the scraper was unable to load user profiles around 1/4 of the time. However, this was still an effective method to get a wide and high-quality selection of books. After data cleaning (discarding missing user/book values and filtering for English books/reviews only), we ended up with:
-1. 16,578 books
+1. 16,575 books
 2. 175,576 users
 3. 476,199 ratings
 
 ### Scraping
 
+This data was scraped using *Beautiful Soup*: https://beautiful-soup-4.readthedocs.io/en/latest/
+I built the BookScraper and UserScraper from scratch, which I used to retrieve the data from goodreads. Since each webpage takes around 2 seconds to retrieve with requests, I also used joblib to parallelize the task. Otherwise, scraping 4000 x 30 x 5 x 30 = 18M sites would take...around 10,000 hours! (Of course, there is overlap between genres/users, but you get the idea...)
+
 ### Efficiency & memory management
 
+Because we would like the recommender to output results in a resonable time frame (<10 seconds), it would be infeasible to use the full user-item matrix (~384GB). Therefore, we only included the 9,396 users that provided the top 30 reviews from the original 4,000 books. Thus, the user-item matrix used was 9,396 x 16,575 (1.3GB). This made computations feasible without loss of quality, because the remaining users contain far less info than users who provided the top reviews for Goodreads' most popular books.
 
 
 
