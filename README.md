@@ -59,7 +59,7 @@ $$
 s_{ub} = z_{ub} - \mu_u  
 $$
 
-where the average rating for user $u$, denoted $\( \mu_u \)$, is defined by:
+where the average z-score normalized rating for user $u$, denoted $\( \mu_u \)$, is defined by:
 
 $$
 \mu_u = \frac{\sum_{b \in I_u} z_{ub}}{|I_u|} 
