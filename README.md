@@ -29,9 +29,56 @@ Specifically, you would value the suggestions avid readers who exhibit the same 
 
 One of the most intuitive (and well-established) ways to encode user ratings of books is via a *user-item matrix*, where $M_{ij}$ is the rating of user $i$ for item $j$. From the tuple (title, user_id, rating) and the genre tags of each book, it is easy to construct both the *user-item matrix* as well as a *genre-user matrix*, where $G_{ij}$ is the number of books that that user $j$ has from genre $i$.   
 
+#### Normalizing ratings
 
+The problem with directly using ratings its true information content depends on both
+1. The average ratings that the user gives
+2. The average rating that the book received </br>
+
+For instance, a 5-star review from a user who always gives 5 stars means something very different from a 5-star review by a more critical user with an average rating of 3.2 stars. The same applies to a 5-star review for a book that everyone loves versus a book with an average of 2.5 stars across 8,546 ratings.
+
+**Z-score normalization**
+
+We first normalize the ratings by each book using the formula 
+
+$$ 
+z_{ub} = \frac{r_{ub} - \mu_{b}}{\sigma_b} 
+$$
+
+where $r_{ub}$ is user $u$'s rating of book $b$, with $\mu_b$ and $\sigma_{b}$ being the mean and standard deviation of each book's ratings, respectively. $\mu_b$ and $\sigma_{b}$ can be computed from the number of ratings given from 1-star to 5-stars. 
+
+**Mean-centered ratings**
+
+We then compute the mean-centered z-score rating $\( s_{uj} \)$ of user $u$ for book $b$ using the expression:
+
+$$
+s_{ub} = z_{ub} - \mu_u  
+$$
+
+where the average rating for user $u$, denoted $\( \mu_u \)$, is defined by:
+
+$$
+\mu_u = \frac{\sum_{b \in B_u} z_{ub}}{|I_u|} 
+$$
+
+where $B_u$ is the set of all books that user $u$ has rated.
+
+This normalization procedure will make comparison between ratings for different books and users significantly more meaningful.
 
 #### User similarity
+
+Having constructed the normalized user-item matrix, we can compare similarity between 2 users using *cosine similarity*, which is 
+
+$$
+\frac{
+\sum_{k \in I_u \cap I_v} (r_{uk} - \mu_u)(r_{vk} - \mu_v)
+}{
+\sqrt{\sum_{k \in I_u \cap I_v} (r_{uk} - \mu_u)^2} \cdot \sqrt{\sum_{k \in I_u \cap I_v} (r_{vk} - \mu_v)^2}
+}
+$$
+
+
+$$
 
 #### Relative expertise
 
