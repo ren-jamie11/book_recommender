@@ -25,7 +25,7 @@ All you need is to enter your Goodreads user_id, and it will:
 
 The recommender leverages the expertise and experience of readers who are both *similar to you* and *informed*. 
 When deciding on which book to read, you would probably look at the overall ratings and ratings count. However, not every rating from every reader is relevant to you, as people have different tastes.
-Specifically, you would value the suggestions avid readers who exhibit the same reading choices/taste as you, as their opinions are likely to be much more informed and relevant to you.</br>
+Specifically, you would value the suggestions of avid readers who exhibit the same reading choices/taste as you, as their opinions are likely to be much more informed and relevant to you.</br>
 
 ## The math 
 
