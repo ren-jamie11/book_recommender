@@ -131,9 +131,9 @@ These are the books suggested to me based on the top 50 users with similar genre
 <img src="https://github.com/ren-jamie11/book_recommender/blob/main/assets/genre_recs.png" alt="Alt text" width="600">
 </br>
 
-I am quite satisfied with these recommendations, as the recommender noticed that I like philosophy/self-help books and suggested books that similar users rated highly. Notice that the k-nearest users' ratings of these books are significantly higher than the overall ratings (expressing the principle that ratings of similar users are more relevant). 
+I am quite satisfied with these recommendations, as the recommender noticed that I like philosophy/self-help books and suggested books that similar users rated highly. (Yes, don't judge me :) I had a phase in college). Notice that the k-nearest users' ratings of these books are significantly higher than the overall ratings (expressing the principle that ratings of similar users are more relevant). 
 
-The counts (of the 50-nearest users who have read each book) are small because the book universe is enormous (relative to amount of data my laptop can efficiently work with), so it is relatively hard to find many users with overlapping books. 
+The counts (of the 50-nearest users who have read each book) are surprisingly small, but that goes to show the reading choices among even similar users are quite diverse. It is also because the universe of books is absolutely enormous.
 
 The above recommendation is biased towards highly popular books that many have read. To make the recommendations more "interesting" or "serendipitous", one can adjust the weightings by the inverse frequency of each book to promote books that are both relevant but not known to many people.
 
@@ -199,7 +199,7 @@ I built the BookScraper and UserScraper from scratch, which I used to retrieve t
 
 ### Efficiency & memory management
 
-Because we would like the recommender to output results in a resonable time frame (<10 seconds), it would be infeasible to use the full user-item matrix (~384GB). Therefore, we only included the 9,396 users that provided the top 30 reviews from the original 4,000 books. Thus, the user-item matrix used was 9,396 x 16,575 (1.3GB). This made computations feasible without loss of quality, because the remaining users contain far less info than users who provided the top reviews for Goodreads' most popular books.
+Because we would like the recommender to output results in a reasonable time frame (<10 seconds), it would be infeasible to use the full user-item matrix (~384GB). Therefore, we only included the 9,396 users that provided the top 30 reviews from the original 4,000 books. Thus, the user-item matrix used was 9,396 x 16,575 (1.3GB). This made computations feasible without loss of quality, because the remaining users contain far less info than users who provided the top reviews for Goodreads' most popular books.
 
 ### Sources
 
