@@ -170,7 +170,7 @@ After retrieving the preference/expertise scores of each user for each genre, we
 
 ## The data
 
-Collecting (and cleaning) the data was no easy task. Fortunately, the Goodreads site is very organized, consistent, and lenient when allowing bots to scrape the site. So, thank you!!!
+Collecting (and cleaning) the data was no easy task. Fortunately, the Goodreads site is very organized, consistent, and lenient when allowing bots to scrape the site. So, thank you!!
 
 ### Data collection
 
